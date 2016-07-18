@@ -3,15 +3,8 @@
 namespace nice
 {
     /// <summary>
-    /// Simple (or better, simplistic) program to mimic Unix's <c>nice</c>.
+    /// Simple (or better, simplistic) program that mimics Unix's <c>nice</c>.
     /// </summary>
-    /// <remarks>
-    /// TODO
-    /// NB only supports two ways:
-    /// 1. nice -n v cmd ...
-    /// 2. nice
-    /// 
-    /// </remarks>
     class Program
     {
         ArgumentsParser Parser { get; set; }
