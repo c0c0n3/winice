@@ -41,7 +41,7 @@ Niceness values range from `-20` (most favorable to the process) to `19`
 (least favorable to the process) and are converted to Windows [priority
 classes][set-priority] as below. (In each range, values are inclusive.)
 
-* `-19` to `-15`: *Real Time*
+* `-20` to `-15`: *Real Time*
 * `-14` to `-8`: *High*
 * `-7` to `-1`: *Above Normal*
 * `0` to `6`: *Normal*
@@ -59,6 +59,21 @@ as below.
 * *Normal*: `0`
 * *Below Normal*: `7`
 * *Idle*: `14`
+
+Note that to run a process with a *Real Time* priority, you need to have
+admin rights. If you use `nice` as a normal user and specify any niceness
+value less then `-14`, you get a priority of *High*. For example, this is
+what you get with no admin rights when nice-ing `nice` itself:
+
+        > nice -n -20 nice
+        > -14
+
+But if you run the same command as an admin, you get:
+
+        > nice -n -20 nice
+        > -19
+
+That is, this time you get a priority of `-19` = *Real Time*.
 
 
 Installation
