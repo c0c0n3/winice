@@ -19,7 +19,7 @@ standalone `exe` I could just dump on any recent Windows box and that
 depended only on libraries already shipping with Windows, so I could
 easily bundle it with a Java app. That ruled out my first candidate, GNU
 Core Utils. So I watched the GUI parade coming out of my Google search.
-Entertaining, but not exactly what I was hooping for. Then I Googled some
+Entertaining, but not exactly what I was hoping for. Then I Googled some
 more. And more. After a whole day of scratching around (ya, my Google-foo
 must suck!) I came to the conclusion that I might just as well spend the
 next day writing it myself, and that's what I did.
@@ -78,8 +78,9 @@ That is, this time you get a priority of `-19` = *Real Time*.
 
 Installation
 ------------
-On Windows 8 and above, just [grab the latest binary][nice-exe] file and
-dump it into some directory. Optionally add the directory to your `PATH`.
+Download the [latest release][latest-release]. On Windows 8 and above,
+just grab the `nice.exe` binary file and dump it into some directory.
+(You may also want to add that directory to your `PATH`.)
 For Windows 7 this should work as well, provided you've kept your system
 up-to-date. In fact, `winice` needs the .NET framework `4.0` or above
 to run. Windows 7 initially didn't ship with .NET, but recent Windows 7
@@ -87,21 +88,25 @@ updates include it. If you want to run `winice` on earlier versions of
 Windows, you'll need to install .NET `4.0` or any later version.
 
 
-Bundling with a Java App
-------------------------
-TODO
-
-
 Hacking
 -------
-TODO
+The program is written in C#, targeting .NET `4.0`. The reason for using
+`4.0` rather than a later version is that many Windows 7 boxes are likely
+to have `4.0` and `4.0` runs on later `4.x` .NET versions too.
+You'll find a Visual Studio solution `win-nice.sln` in the root directory.
+The code is pretty straightforward. The main is in the `Program` class.
+The first step is to parse the command line arguments to figure out what
+task to run. Each task implements the `ITask` interface and gets fed the
+parsed command line arguments. Currently there are only two tasks: the
+one to print the current niceness value and the other to run a process
+with a given scheduling priority. I'm pretty sure you can figure out the
+rest on your own...
 
 
 
 
-
-[nice-exe]: TODO: point to readme in bin-repo branch
-    "winice Binary"
+[latest-release]: https://github.com/c0c0n3/winice/releases/latest
+    "Latest winice Release"
 [set-priority]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms686219(v=vs.85).aspx
     "Windows API - SetPriorityClass Function"
 [win-scheduling]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms685100(v=vs.85).aspx
