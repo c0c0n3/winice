@@ -78,21 +78,15 @@ That is, this time you get a priority of `-19` = *Real Time*.
 
 Installation
 ------------
-Download the [latest release][latest-release]. On Windows 8 and above,
-just grab the `nice.exe` binary file and dump it into some directory.
-(You may also want to add that directory to your `PATH`.)
-For Windows 7 this should work as well, provided you've kept your system
-up-to-date. In fact, `winice` needs the .NET framework `4.0` or above
-to run. Windows 7 initially didn't ship with .NET, but recent Windows 7
-updates include it. If you want to run `winice` on earlier versions of
-Windows, you'll need to install .NET `4.0` or any later version.
+Download the [latest release][latest-release]. Just grab the `nice.exe` 
+binary file and dump it into some directory. (You may also want to add 
+that directory to your `PATH`.) `winice` needs the .NET framework `4.8` 
+or above to run.
 
 
 Hacking
 -------
-The program is written in C#, targeting .NET `4.0`. The reason for using
-`4.0` rather than a later version is that many Windows 7 boxes are likely
-to have `4.0` and `4.0` runs on later `4.x` .NET versions too.
+The program is written in C#, targeting .NET `4.8`. 
 You'll find a Visual Studio solution `win-nice.sln` in the root directory.
 The code is pretty straightforward. The main is in the `Program` class.
 The first step is to parse the command line arguments to figure out what
