@@ -1,0 +1,43 @@
+name: Release winice
+
+on:
+  push:
+    branches: [ master, cicd ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    # windows image w/ .NET 4.8
+    # see: https://github.com/actions/runner-images/blob/win25/20260413.84/images/windows/Windows2025-Readme.md
+    runs-on: windows-2025
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build Release
+        run: msbuild nice\nice.csproj /t:Clean,Build /p:Configuration=Release /p:Platform=AnyCPU
+
+      - name: Prepare release asset
+        shell: pwsh
+        run: |
+          Copy-Item nice\bin\Release\nice.exe nice.exe
+
+      - name: Create GitHub release and upload nice.exe
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "${{ github.ref_name }}"
+          gh release create $tag `
+            nice.exe `
+            --title $tag `
+            --notes "Automated release for $tag"
