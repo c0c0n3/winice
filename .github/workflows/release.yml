@@ -1,8 +1,10 @@
 name: Release winice
 
+# automatically trigger this workflow when a tag starting w/ a 'v' (eg. 'v1.0.2') is pushed
+# but also allow to run the workflow manually 
+# see: https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow) 
 on:
   push:
-    branches: [ master, cicd ]
     tags:
       - 'v*'
   workflow_dispatch:
