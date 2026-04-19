@@ -7,11 +7,13 @@ This is a simple (or better, simplistic) program that mimics Unix's own
 
 Wi nice?
 --------
-Because I couldn't find any easy-peasy way to start a process from Java
-with a given [priority class][set-priority]. I first tried my luck with
-the obvious:
+Because (**back in 2016**) I couldn't find any easy-peasy way to start
+a process from Java with a given [priority class][set-priority]. I first
+tried my luck with the obvious:
 
-        cmd /c start /belownormal /wait /b my.exe some args
+```
+    cmd /c start /belownormal /wait /b my.exe some args
+```
 
 But the Java `ProcessBuilder` didn't quite like that and gave me endless
 trouble with stream redirection. So I started looking for a stinking,
@@ -24,22 +26,26 @@ more. And more. After a whole day of scratching around (ya, my Google-foo
 must suck!) I came to the conclusion that I might just as well spend the
 next day writing it myself, and that's what I did.
 
+In 2026, PowerShell and other tools probably make `winice` redundant, but
+I'll keep it here just in case anyone needs it for old Windows setups.
+
 
 Usage
 -----
 Very similar to `nice` on Unix.
 
-        nice [-n niceness] [COMMAND [ARG]...]
+```
+    nice [-n niceness] [COMMAND [ARG]...]
+```
 
-Runs `COMMAND` with a `niceness` value, which affects [process scheduling]
-[win-scheduling]. If you specify a `COMMAND` but no `niceness` (i.e. no
-`-n` option) then it runs `COMMAND` with a `niceness` value of `10`. With
-no `COMMAND` and no `niceness`, it just prints the current `niceness` value
-to `stdout`.
+Runs `COMMAND` with a `niceness` value, which affects [process scheduling][win-scheduling].
+If you specify a `COMMAND` but no `niceness` (i.e. no `-n` option) then it runs
+`COMMAND` with a `niceness` value of `10`. With no `COMMAND` and no `niceness`,
+it just prints the current `niceness` value to `stdout`.
 
 Niceness values range from `-20` (most favorable to the process) to `19`
 (least favorable to the process) and are converted to Windows [priority
-classes][set-priority] as below. (In each range, values are inclusive.)
+classes][set-priority] as listed below. (In each range, values are inclusive.)
 
 * `-20` to `-15`: *Real Time*
 * `-14` to `-8`: *High*
@@ -51,7 +57,7 @@ classes][set-priority] as below. (In each range, values are inclusive.)
 Any value less than `-20` has the same effect as `-20`. Likewise, any
 value greater than `19` has the same effect as `19`. In the reverse
 direction, [priority classes][set-priority] map to niceness values
-as below.
+as listed below.
 
 * *Real Time*: `-19`
 * *High*: `-14`
@@ -65,13 +71,17 @@ admin rights. If you use `nice` as a normal user and specify any niceness
 value less then `-14`, you get a priority of *High*. For example, this is
 what you get with no admin rights when nice-ing `nice` itself:
 
-        > nice -n -20 nice
-        > -14
+```powershell
+> nice -n -20 nice
+> -14
+```
 
 But if you run the same command as an admin, you get:
 
-        > nice -n -20 nice
-        > -19
+```powershell
+> nice -n -20 nice
+> -19
+```
 
 That is, this time you get a priority of `-19` = *Real Time*.
 
@@ -81,13 +91,18 @@ Installation
 Download the [latest release][latest-release]. Just grab the `nice.exe` 
 binary file and dump it into some directory. (You may also want to add 
 that directory to your `PATH`.) `winice` needs the .NET framework `4.8` 
-or above to run.
+or above to run. (The release page details supported Windows/.NET versions
+and install instructions.)
+
+If you have an ancient Windows setup, you should probably download the
+[2016 release][2016-release]. It has slightly less features, but it'll
+do a decent job.
 
 
 Hacking
 -------
 The program is written in C#, targeting .NET `4.8`. 
-You'll find a Visual Studio solution `win-nice.sln` in the root directory.
+You'll find a Visual Studio 14 solution `win-nice.sln` in the root directory.
 The code is pretty straightforward. The main is in the `Program` class.
 The first step is to parse the command line arguments to figure out what
 task to run. Each task implements the `ITask` interface and gets fed the
@@ -96,9 +111,23 @@ one to print the current niceness value and the other to run a process
 with a given scheduling priority. I'm pretty sure you can figure out the
 rest on your own...
 
+Build and run locally using Visual Studio or the `build-release.bat` script.
+Once you're ready to release,
+
+- decide on the **semantic version** number, e.g. `2.1.5`
+- update `AssemblyInfo.cs` accordingly
+- merge your branch into `master`
+- tag the release using the format `vM.m.p` (sem ver), e.g. `git tag v2.1.5`
+- push the tag, e.g. `git push origin v2.1.5`
+- edit the GitHub release the `Release winice` GitHub workflow automatically
+  created to include release notes, supported versions, install instructions,
+  etc.
 
 
 
+
+[2016-release]: https://github.com/c0c0n3/winice/releases/tag/v1.0.0
+    "2016 winice Release"
 [latest-release]: https://github.com/c0c0n3/winice/releases/latest
     "Latest winice Release"
 [set-priority]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms686219(v=vs.85).aspx
