@@ -2,7 +2,7 @@ name: Release winice
 
 # automatically trigger this workflow when a tag starting w/ a 'v' (eg. 'v1.0.2') is pushed
 # but also allow to run the workflow manually 
-# see: https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow) 
+# see: https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow
 on:
   push:
     tags:
@@ -25,6 +25,7 @@ jobs:
       - name: Set up MSBuild
         uses: microsoft/setup-msbuild@v3
 
+      # build the same way as the local build (build-release.bat)
       - name: Build Release
         run: msbuild nice\nice.csproj /t:Clean,Build /p:Configuration=Release /p:Platform=AnyCPU
 
