@@ -13,11 +13,16 @@ namespace nice
     class NoArguments : IArguments { }
 
     /// <summary>
-    /// Holds the parsed command line arguments for an invocation that 
+    /// Holds the parsed command line arguments for an invocation that
     /// requested to set the process priority.
     /// </summary>
     class SetPriorityArguments : IArguments
     {
+        public SetPriorityArguments() {
+            ProgramPathName = "";
+            ProgramArgsLine = "";
+        }
+
         /// <summary>
         /// Priority to use for the program to run.
         /// </summary>
