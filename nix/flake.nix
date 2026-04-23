@@ -13,15 +13,27 @@
     win-pkgs = import nixpkgs {
       system = win;
     };
+
+    mkFwDepZip = pkgs: rid:
+      pkgs.callPackage ./winice/framework-dependent-zip.nix {
+        inherit rid;
+      };
   in {
     packages.${macos} = {
-      winice = macos-pkgs.callPackage ./winice.nix { rid = "osx-arm64"; };
+      default = macos-pkgs.callPackage ./winice/devenv.nix {};
+      winice-bare-osx-arm64 = mkFwDepZip macos-pkgs "osx-arm64";
+
+      # cross-platform builds (not working at the mo)
+      # winice-bare-win-x64 = mkFwDepZip macos-pkgs "win-x64";
+      # winice-bare-win-arm64 = mkFwDepZip macos-pkgs "win-arm64";
     };
     packages.${win} = {
-      winice = win-pkgs.callPackage ./winice.nix { rid = "TODO"; };
-      winice-osx-arm64 = macos-pkgs.callPackage ./winice.nix {
-        rid = "osx-arm64";
-      };
+      default = win-pkgs.callPackage ./winice/devenv.nix {};
+      winice-bare-win-x64 = mkFwDepZip win-pkgs "win-x64";
+
+      # cross-platform builds (not working at the mo)
+      # winice-bare-win-arm64 = mkFwDepZip win-pkgs "win-arm64";
+      # winice-bare-osx-arm64 = mkFwDepZip win-pkgs "osx-arm64";
     };
   };
 }
