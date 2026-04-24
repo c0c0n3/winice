@@ -18,14 +18,32 @@
       pkgs.callPackage ./winice/framework-dependent-zip.nix {
         inherit rid;
       };
+    mkSelfCont = pkgs: rid:
+      pkgs.callPackage ./winice/self-contained.nix {
+        inherit rid;
+      };
   in {
     packages.${macos} = {
       default = macos-pkgs.callPackage ./winice/devenv.nix {};
       winice-bare-osx-arm64 = mkFwDepZip macos-pkgs "osx-arm64";
+      winice-osx-arm64 = mkSelfCont macos-pkgs "osx-arm64";
+
+      # cross-platform builds (not working at the mo)
+      # winice-bare-win-x64 = mkFwDepZip macos-pkgs "win-x64";
+      # winice-bare-win-arm64 = mkFwDepZip macos-pkgs "win-arm64";
+      # winice-win-x64 = mkSelfCont macos-pkgs "win-x64";
+      # winice-win-arm64 = mkSelfCont macos-pkgs "win-arm64";
     };
     packages.${win} = {
       default = win-pkgs.callPackage ./winice/devenv.nix {};
       winice-bare-win-x64 = mkFwDepZip win-pkgs "win-x64";
+      winice-win-x64 = mkSelfCont win-pkgs "win-x64";
+
+      # cross-platform builds (not working at the mo)
+      # winice-bare-win-arm64 = mkFwDepZip win-pkgs "win-arm64";
+      # winice-bare-osx-arm64 = mkFwDepZip win-pkgs "osx-arm64";
+      # winice-osx-arm64 = mkSelfCont win-pkgs "osx-arm64";
+      # winice-win-arm64 = mkSelfCont win-pkgs "win-arm64";
     };
   };
 }
