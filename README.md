@@ -27,7 +27,9 @@ must suck!) I came to the conclusion that I might just as well spend the
 next day writing it myself, and that's what I did.
 
 In 2026, PowerShell and other tools probably make `winice` redundant, but
-I'll keep it here just in case anyone needs it for old Windows setups.
+I'll keep it here just in case anyone needs it for old Windows setups. Yep,
+Winice's slogan is:
+- drop one exe onto as many (possibly quite old) Windows machines as possible
 
 
 Usage
@@ -88,9 +90,9 @@ That is, this time you get a priority of `-19` = *Real Time*.
 
 Installation
 ------------
-Download the [latest release][latest-release]. Just grab the `nice.exe` 
-binary file and dump it into some directory. (You may also want to add 
-that directory to your `PATH`.) `winice` needs the .NET framework `4.8` 
+Download the [latest release][latest-release]. Just grab the `nice.exe`
+binary file and dump it into some directory. (You may also want to add
+that directory to your `PATH`.) `winice` needs the .NET framework `4.8`
 or above to run. (The release page details supported Windows/.NET versions
 and install instructions.)
 
@@ -101,8 +103,11 @@ do a decent job.
 
 Hacking
 -------
-The program is written in C#, targeting .NET `4.8`. 
-You'll find a Visual Studio 14 solution `win-nice.sln` in the root directory.
+The program is written in C#, targeting .NET `10`. (We targeted .NET
+`4.8` up to [v1.1.0][v1.1.0], but in 2026, it [looks like][iss-7] .NET
+`10` sort of strikes the right balance between broad backward compat
+and future proofing.)
+
 The code is pretty straightforward. The main is in the `Program` class.
 The first step is to parse the command line arguments to figure out what
 task to run. Each task implements the `ITask` interface and gets fed the
@@ -111,26 +116,36 @@ one to print the current niceness value and the other to run a process
 with a given scheduling priority. I'm pretty sure you can figure out the
 rest on your own...
 
-Build and run locally using Visual Studio or the `build-release.bat` script.
+Build and run locally using the Nix flake in the `nix` dir. (Nix buys
+us [reproducibility and local-first CI/CD][iss-4]. We used to have a
+[GitHub CI/CD pipeline][gh-ci-cd], but we don't need that any more
+since Nix makes sure builds are reproducible across dev and server
+machines.)
+
 Once you're ready to release,
 
 - decide on the **semantic version** number, e.g. `2.1.5`
-- update `AssemblyInfo.cs` accordingly
+- update the `version` attribute in `nix/winice/util.nix` accordingly
 - merge your branch into `master`
 - tag the release using the format `vM.m.p` (sem ver), e.g. `git tag v2.1.5`
 - push the tag, e.g. `git push origin v2.1.5`
-- edit the GitHub release the `Release winice` GitHub workflow automatically
-  created to include release notes, supported versions, install instructions,
-  etc.
+- build the release, e.g. `nix build .#winice-bare-osx-arm64`
+- create a GitHub release from the tag, upload the Nix-built release
+  artefacts, include release notes, supported versions, install
+  instructions, etc.
 
 
 
 
 [2016-release]: https://github.com/c0c0n3/winice/releases/tag/v1.0.0
     "2016 winice Release"
+[gh-ci-cd]: https://github.com/c0c0n3/winice/blob/v1.1.0/.github/workflows/release.yml
+[iss-4]: https://github.com/c0c0n3/winice/issues/4
+[iss-7]: https://github.com/c0c0n3/winice/issues/7
 [latest-release]: https://github.com/c0c0n3/winice/releases/latest
     "Latest winice Release"
 [set-priority]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms686219(v=vs.85).aspx
     "Windows API - SetPriorityClass Function"
+[v1.1.0]: https://github.com/c0c0n3/winice/tree/v1.1.0
 [win-scheduling]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms685100(v=vs.85).aspx
     "Windows Scheduling Priorities"
