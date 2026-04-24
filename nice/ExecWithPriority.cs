@@ -23,7 +23,7 @@ namespace nice
         private string[] GetExecutableExtensions()
         {
             // Use PATHEXT environment variable like Windows does
-            string pathExt = Environment.GetEnvironmentVariable("PATHEXT");
+            string? pathExt = Environment.GetEnvironmentVariable("PATHEXT");
             if (!string.IsNullOrEmpty(pathExt))
             {
                 return pathExt.Split(Path.PathSeparator);
@@ -45,7 +45,7 @@ namespace nice
             List<string> searchPaths = new List<string>();
             searchPaths.Add(Directory.GetCurrentDirectory());
 
-            string pathEnv = Environment.GetEnvironmentVariable("PATH");
+            string? pathEnv = Environment.GetEnvironmentVariable("PATH");
             if (!string.IsNullOrEmpty(pathEnv))
             {
                 searchPaths.AddRange(pathEnv.Split(Path.PathSeparator));
@@ -53,8 +53,8 @@ namespace nice
 
             // Determine what extensions to try
             string currentExtension = Path.GetExtension(programName);
-            string[] extensionsToTry = string.IsNullOrEmpty(currentExtension) 
-                ? GetExecutableExtensions() 
+            string[] extensionsToTry = string.IsNullOrEmpty(currentExtension)
+                ? GetExecutableExtensions()
                 : new string[] { "" }; // Empty string means use the name as-is
 
             // Search each extension with each path (matches cmd.exe behavior)
