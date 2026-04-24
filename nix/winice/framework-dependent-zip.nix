@@ -41,9 +41,9 @@ stdenv.mkDerivation rec {
 
   buildPhase = ''
     dotnet publish nice/nice.csproj \
-      --configuration Release \
-      ${version-prop} \
-      --runtime ${rid}
+      ${build-flags.version} \
+      --runtime ${rid} \
+      ${build-flags.release}
   '';
 
   installPhase = ''
