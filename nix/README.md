@@ -6,12 +6,16 @@ We use Nix to reliably build Winice on any machine Nix supports.
 You should install Nix if you don't have it yet:
 - https://docs.determinate.systems/
 
+All the Bash commands below are meant to be run from the repo's
+root dir.
+
+
+### Dev env
+
 Winice's Nix shell drops you into a dev env with the .NET toolchain:
 
 ```bash
-$ cd nix
-$ nix shell
-$ cd ..
+$ nix shell nix/#
 ```
 
 Now you can run a basic build
@@ -33,17 +37,41 @@ $ dotnet restore nice/nice.csproj --runtime win-x64 \
 #     corresponding nice/packages.win-x64.lock.json
 ```
 
+
+### Nix packages
+
 To see what Nix packages you can build, run
 
 ```bash
-$ cd nix
-$ nix flake show
+$ nix flake show nix/
 ```
+
+Package names have the following format:
+
+- `winice-[deployment mode]-[target system]`
+
+where deployment mode can be either `fdd` (framework-depended deployment)
+or `scd` (self-contained deployment), and target system is one of
+the following .NET RIDs: `win-x64`, `win-arm64`, `osx-arm64`.
+
+To build a package for the same platform on which you're running the
+build, pick the package with the RID corresponding to your platform.
+For example, to build an FDD release on macOS (compiler's host) for
+macOS (target), run
+
+```bash
+$ nix build nix/.#winice-fdd-osx-arm64
+```
+
+Notice that cross-compilation isn't working fully at the moment, so
+you can't build a Nix package for a platform different than yours.
+But there's a simple workaround, see the "Cross-compilation" section
+below.
 
 To print the build command for a Winice Nix package:
 
 ```bash
-$ nix develop .#winice-bare-osx-arm64 --command bash -c 'printenv buildPhase'
+$ nix develop nix/.#winice-fdd-osx-arm64 --command bash -c 'printenv buildPhase'
 dotnet publish nice/nice.csproj \
   -p:Version=2.0.0 \
   --runtime osx-arm64 \
@@ -55,8 +83,7 @@ is exactly the same as that the Nix shell makes available. So for
 example, running the following commands on macOS
 
 ```bash
-$ cd nix
-$ nix shell
+$ nix shell nix/#
 $ dotnet publish nice/nice.csproj \
   -p:Version=2.0.0 \
   --runtime osx-arm64 \
@@ -66,6 +93,85 @@ $ dotnet publish nice/nice.csproj \
 will produce the same .NET artefacts as
 
 ```bash
-$ cd nix
-$ nix build .#winice-bare-osx-arm64
+$ nix build nix/.#winice-fdd-osx-arm64
 ```
+
+
+### Cross-compilation
+
+To cross-compile an FDD package, enter the corresponding Nix package's
+dev shell, then manually run the package's build and install phases.
+For example, to cross-compile from macOS or Linux to Win x64, run:
+
+```bash
+$ nix develop nix/#winice-fdd-win-x64
+$ export out="$(pwd)/build"
+$ printenv buildPhase | bash
+$ printenv installPhase | bash
+$ eza -laT build/
+```
+
+To clean up:
+
+```bash
+$ git restore nice/packages.lock.json
+$ rm -rf nice/bin nice/obj build
+```
+
+Cross-compiling an SCD package is basically the same. For example,
+to cross-compile from macOS or Linux to Win x64, run:
+
+```bash
+$ nix develop nix/#winice-scd-win-x64
+$ export out="$(pwd)/build"
+$ printenv buildPhase | bash
+$ printenv installPhase | bash
+$ eza -laT build/
+```
+
+To clean up:
+
+```bash
+$ git restore nice/packages.lock.json
+$ rm -rf nice/bin nice/obj build
+```
+
+
+### Cross-compilation tests
+
+If you're cross-compiling from macOS to Windows, you'll need a Windows
+box to run the Winice exe. If you don't have one, you can easily use
+a GitHub VM for testing.
+
+Create a new GitHub test repo with the below layout.
+
+```
+.github
+└── workflows
+    └── dotnet-test.yml
+test
+└── osx-arm64-to-win-x64
+    ├── framework-dependent
+    │   ├── nice.deps.json
+    │   ├── nice.dll
+    │   ├── nice.exe
+    │   └── nice.runtimeconfig.json
+    └── self-contained
+        └── nice.exe
+```
+
+This is the [dotnet-test.yml][dotnet-test.yml] that spins off a
+Windows VM and runs the `nice.exe` executables. You have to copy
+it to `.github/workflows` in the new test repo. To populate the
+`framework-dependent` dir, copy over the contents of the `bin`
+dir of your FDD build. Likewise, copy the `nice.exe` in the SCD
+output dir over to the `self-contained` dir in the test repo.
+
+Commit and push. The GitHub action should fire right away. Have
+a look at the action's log. Rerun the action if needed. Once you
+have a new FDD or SCD build, copy it over again to the test repo.
+Commit and push again. Rinse and repeat until you're happy.
+
+
+
+[dotnet-test.yml]: ./dotnet-test.yml

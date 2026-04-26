@@ -116,11 +116,11 @@ one to print the current niceness value and the other to run a process
 with a given scheduling priority. I'm pretty sure you can figure out the
 rest on your own...
 
-Build and run locally using the Nix flake in the `nix` dir. (Nix buys
-us [reproducibility and local-first CI/CD][iss-4]. We used to have a
-[GitHub CI/CD pipeline][gh-ci-cd], but we don't need that any more
-since Nix makes sure builds are reproducible across dev and server
-machines.)
+[Build and run][nix-doc] locally using the Nix flake in the `nix` dir.
+(Nix buys us [reproducibility and local-first CI/CD][iss-4]. We used
+to have a [GitHub CI/CD pipeline][gh-ci-cd], but we don't need that
+any more since Nix makes sure builds are reproducible across dev and
+server machines.)
 
 Once you're ready to release,
 
@@ -129,7 +129,8 @@ Once you're ready to release,
 - merge your branch into `master`
 - tag the release using the format `vM.m.p` (sem ver), e.g. `git tag v2.1.5`
 - push the tag, e.g. `git push origin v2.1.5`
-- build the release, e.g. `nix build .#winice-bare-osx-arm64`
+- build the release, e.g. `nix build nix/#winice-fdd-osx-arm64`,
+  `nix build nix/#winice-scd-osx-arm64`, etc.
 - create a GitHub release from the tag, upload the Nix-built release
   artefacts, include release notes, supported versions, install
   instructions, etc.
@@ -144,6 +145,7 @@ Once you're ready to release,
 [iss-7]: https://github.com/c0c0n3/winice/issues/7
 [latest-release]: https://github.com/c0c0n3/winice/releases/latest
     "Latest winice Release"
+[nix-doc]: ./nix/README.md
 [set-priority]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms686219(v=vs.85).aspx
     "Windows API - SetPriorityClass Function"
 [v1.1.0]: https://github.com/c0c0n3/winice/tree/v1.1.0

@@ -19,7 +19,7 @@
 # below.
 #
 # $ export DOTNET_ROOT=/nix/store/n21rkb42padh3wjswm7vd55cra0mb7c0-winice-devenv/share/dotnet
-# $ nix build .#winice-bare-osx-arm64
+# $ nix build nix/.#winice-fdd-osx-arm64
 # $ result/bin/nice
 #
 # See also:
@@ -48,15 +48,33 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     mkdir -p $out/bin
+    mkdir -p $out/${winice-root}
 
     cp -r ${dotnetPubDir rid}/* $out/bin/
+    cp -r ${dotnetPubDir rid}/* $out/${winice-root}/
 
-    mkdir ${winice-root}
-    cp -r ${dotnetPubDir rid}/* ${winice-root}/
+    cd $out/
     zip -r ${winice-root}.zip ${winice-root}
-    cp ${winice-root}.zip $out/
-
-    sha256sum ${winice-root}.zip > $out/${winice-root}.sha256
+    sha256sum ${winice-root}.zip > ${winice-root}.sha256
+    rm -rf ${winice-root}/
   '';
 
 }
+# NOTE
+# ----
+# 1. Automagic NuGet config. There's an extra `configureNuget` task
+# that runs just before the build---probably inserted by the .NET SDK
+# Nix expression. Here's what it does:
+# - adds these vars to env
+#   `NUGET_PACKAGES=/tmp/nix-shell.Y3mOVF/nuget.MGnNET/packages/`
+#   `NUGET_FALLBACK_PACKAGES=/tmp/nix-shell.Y3mOVF/nuget.MGnNET/fallback/`
+# - creates nuget.config w/
+# ```xml
+#   <packageSources>
+#     <clear/>
+#     <add key="_nix" value="/tmp/nix-shell.Y3mOVF/nuget.P9F1z4/source"/>
+#   </packageSources>
+#   <packageRestore>
+#     <clear/>
+#   </packageRestore>
+# ```
