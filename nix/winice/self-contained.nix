@@ -55,7 +55,7 @@ stdenv.mkDerivation rec {
 # the self-contained file is about 75MB. Trimming brings down the file
 # size to 15MB, but also introduces some weird behaviour. For example,
 #
-# $ nix build .#winice-osx-arm64
+# $ nix build .#winice-scd-osx-arm64
 # $ result/nice -n 10 eza -l result/
 # .r-xr-xr-x 76M root  1 Jan  1970 nice
 # .r--r--r--  71 root  1 Jan  1970 nice.sha256

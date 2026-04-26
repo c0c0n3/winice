@@ -19,7 +19,7 @@
 # below.
 #
 # $ export DOTNET_ROOT=/nix/store/n21rkb42padh3wjswm7vd55cra0mb7c0-winice-devenv/share/dotnet
-# $ nix build .#winice-bare-osx-arm64
+# $ nix build nix/.#winice-fdd-osx-arm64
 # $ result/bin/nice
 #
 # See also:

@@ -129,7 +129,8 @@ Once you're ready to release,
 - merge your branch into `master`
 - tag the release using the format `vM.m.p` (sem ver), e.g. `git tag v2.1.5`
 - push the tag, e.g. `git push origin v2.1.5`
-- build the release, e.g. `nix build .#winice-bare-osx-arm64`
+- build the release, e.g. `nix build nix/#winice-fdd-osx-arm64`,
+  `nix build nix/#winice-scd-osx-arm64`, etc.
 - create a GitHub release from the tag, upload the Nix-built release
   artefacts, include release notes, supported versions, install
   instructions, etc.
