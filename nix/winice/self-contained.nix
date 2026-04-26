@@ -37,12 +37,11 @@ stdenv.mkDerivation rec {
   '';
 
   installPhase = ''
-    mkdir $out winice
+    mkdir -p $out
 
-    cp ${dotnetPubDir rid}/nice* winice/
-    cd winice
+    cp ${dotnetPubDir rid}/nice* $out/
+    cd $out
     sha256sum nice* > nice.sha256
-    mv * $out/
   '';
 
 }
@@ -70,3 +69,5 @@ stdenv.mkDerivation rec {
 # future---see `self-contained.alt.nix`. But right now, it seems to
 # me it might cause extra headaches for the kind of cross-compiling
 # we'd like to do.
+#
+# 4. Automagic NuGet config. See note in `framework-dependent-zip.nix`.
