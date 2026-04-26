@@ -135,3 +135,43 @@ To clean up:
 $ git restore nice/packages.lock.json
 $ rm -rf nice/bin nice/obj build
 ```
+
+
+### Cross-compilation tests
+
+If you're cross-compiling from macOS to Windows, you'll need a Windows
+box to run the Winice exe. If you don't have one, you can easily use
+a GitHub VM for testing.
+
+Create a new GitHub test repo with the below layout.
+
+```
+.github
+└── workflows
+    └── dotnet-test.yml
+test
+└── osx-arm64-to-win-x64
+    ├── framework-dependent
+    │   ├── nice.deps.json
+    │   ├── nice.dll
+    │   ├── nice.exe
+    │   └── nice.runtimeconfig.json
+    └── self-contained
+        └── nice.exe
+```
+
+This is the [dotnet-test.yml][dotnet-test.yml] that spins off a
+Windows VM and runs the `nice.exe` executables. You have to copy
+it to `.github/workflows` in the new test repo. To populate the
+`framework-dependent` dir, copy over the contents of the `bin`
+dir of your FDD build. Likewise, copy the `nice.exe` in the SCD
+output dir over to the `self-contained` dir in the test repo.
+
+Commit and push. The GitHub action should fire right away. Have
+a look at the action's log. Rerun the action if needed. Once you
+have a new FDD or SCD build, copy it over again to the test repo.
+Commit and push again. Rinse and repeat until you're happy.
+
+
+
+[dotnet-test.yml]: ./dotnet-test.yml
