@@ -1,3 +1,15 @@
+#
+# Nix flake for developing, building, and releasing Winice.
+# It provides:
+# - A dev env with the .NET toolchain.
+# - Nix packages for Winice framework-dependent deployment (FDD)
+#   and self-contained deployment (SCD).
+# - Cross-compilation.
+#
+# You can build this flake's derivations either on Apple silicon
+# or x86_64 Linux. That means you can use this flake on Win 10 (or
+# above) under WSL 2.
+#
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -28,22 +40,24 @@
       winice-fdd-osx-arm64 = mkFwDepZip macos-pkgs "osx-arm64";
       winice-scd-osx-arm64 = mkSelfCont macos-pkgs "osx-arm64";
 
-      # cross-platform builds (not working at the mo)
-      # winice-fdd-win-x64 = mkFwDepZip macos-pkgs "win-x64";
-      # winice-fdd-win-arm64 = mkFwDepZip macos-pkgs "win-arm64";
-      # winice-scd-win-x64 = mkSelfCont macos-pkgs "win-x64";
-      # winice-scd-win-arm64 = mkSelfCont macos-pkgs "win-arm64";
+      # cross-platform builds
+      # not working at the mo, but see readme for a workaround
+      winice-fdd-win-x64 = mkFwDepZip macos-pkgs "win-x64";
+      winice-fdd-win-arm64 = mkFwDepZip macos-pkgs "win-arm64";
+      winice-scd-win-x64 = mkSelfCont macos-pkgs "win-x64";
+      winice-scd-win-arm64 = mkSelfCont macos-pkgs "win-arm64";
     };
     packages.${win} = {
       default = win-pkgs.callPackage ./winice/devenv.nix {};
       winice-fdd-win-x64 = mkFwDepZip win-pkgs "win-x64";
       winice-scd-win-x64 = mkSelfCont win-pkgs "win-x64";
 
-      # cross-platform builds (not working at the mo)
-      # winice-fdd-win-arm64 = mkFwDepZip win-pkgs "win-arm64";
-      # winice-fdd-osx-arm64 = mkFwDepZip win-pkgs "osx-arm64";
-      # winice-scd-osx-arm64 = mkSelfCont win-pkgs "osx-arm64";
-      # winice-scd-win-arm64 = mkSelfCont win-pkgs "win-arm64";
+      # cross-platform builds
+      # not working at the mo, but see readme for a workaround
+      winice-fdd-win-arm64 = mkFwDepZip win-pkgs "win-arm64";
+      winice-fdd-osx-arm64 = mkFwDepZip win-pkgs "osx-arm64";
+      winice-scd-osx-arm64 = mkSelfCont win-pkgs "osx-arm64";
+      winice-scd-win-arm64 = mkSelfCont win-pkgs "win-arm64";
     };
   };
 }
